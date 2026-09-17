@@ -1,9 +1,22 @@
+import { Link } from "react-router-dom";
+
 export default function RestaurantCard({ restaurant }) {
-  const { name, cuisine, address, rating, deliveryTimeMinutes, isOpen, image } =
-    restaurant;
+  const {
+    id,
+    name,
+    cuisine,
+    address,
+    rating,
+    deliveryTimeMinutes,
+    isOpen,
+    image,
+  } = restaurant;
 
   return (
-    <article className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+    <Link
+      to={`/restaurants/${id}`}
+      className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+    >
       <div className="relative">
         <img src={image} alt={name} className="w-full h-40 object-cover" />
         <span
@@ -27,6 +40,6 @@ export default function RestaurantCard({ restaurant }) {
           <span>{deliveryTimeMinutes} min</span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
