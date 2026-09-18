@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { mockRestaurants } from "../data/mockRestaurants";
 import { mockMenus } from "../data/mockMenus";
 import MenuItemCard from "../components/MenuItemCard";
+import CartBar from "../../../shared/components/CartBar";
 
 export default function ResturantDetailPage() {
   const { restaurantId } = useParams();
@@ -52,10 +53,18 @@ export default function ResturantDetailPage() {
           {menuItems.length === 0 ? (
             <p className="text-gray-500 text-sm">No menu items yet.</p>
           ) : (
-            menuItems.map((item) => <MenuItemCard key={item.id} item={item} />)
+            menuItems.map((item) => (
+              <MenuItemCard
+                key={item.id}
+                item={item}
+                restaurantId={restaurant.id}
+                restaurantName={restaurant.name}
+              />
+            ))
           )}
         </div>
       </div>
+      <CartBar />
     </div>
   );
 }
