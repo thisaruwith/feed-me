@@ -1,15 +1,49 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { mockRestaurants } from "../data/mockRestaurants";
-import { mockMenus } from "../data/mockMenus";
+import apiClient from "../../../shared/api/client";
 import MenuItemCard from "../components/MenuItemCard";
 import CartBar from "../../../shared/components/CartBar";
 
-export default function ResturantDetailPage() {
+export default function RestaurantDetailPage() {
   const { restaurantId } = useParams();
-  const restaurant = mockRestaurants.find((r) => r.id === Number(restaurantId));
-  const menuItems = mockMenus[restaurantId] || [];
+  const [restaurant, setRestaurant] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  if (!restaurant) {
+  useEffect(() => {
+    let cancelled = false;
+    setIsLoading(true);
+    setNotFound(false);
+
+    apiClient
+      .get(`/api/restaurants/${restaurantId}/menu`)
+      .then((response) => {
+        if (cancelled) return;
+        const { menuItems: items, ...restaurantData } = response.data;
+        setRestaurant(restaurantData);
+        setMenuItems(items);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        if (err.response?.status === 404) setNotFound(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [restaurantId]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-8 text-gray-500">Loading…</div>
+    );
+  }
+
+  if (notFound || !restaurant) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <p className="text-gray-600">Restaurant not found.</p>
@@ -42,7 +76,7 @@ export default function ResturantDetailPage() {
             </p>
             <p className="text-sm text-gray-600 mt-1">
               <span className="text-amber-500">★</span>{" "}
-              {restaurant.rating.toFixed(1)} · {restaurant.deliveryTimeMinutes}{" "}
+              {restaurant.rating?.toFixed(1)} · {restaurant.deliveryTimeMinutes}{" "}
               min
             </p>
           </div>

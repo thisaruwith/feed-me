@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
+const restaurantsRouter = require("./routes/restaurants");
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +29,8 @@ app.get("/api/health", (req, res) => {
     time: new Date().toISOString(),
   });
 });
+
+app.use("/api/restaurants", restaurantsRouter);
 
 // Socket.IO connection log — replace with real room join logic
 // (order:<id> rooms, driver rooms) as the order/delivery routes come online.
