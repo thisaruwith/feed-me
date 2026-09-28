@@ -1,4 +1,16 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=feedme
+      - POSTGRES_PASSWORD=feedme_dev_password
+      - POSTGRES_DB=feed_me
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   server:
     build: ./server
     ports:
@@ -7,6 +19,9 @@ services:
       - ./server/.env
     environment:
       - CLIENT_ORIGIN=http://localhost:3000
+      - DATABASE_URL=postgresql://feedme:feedme_dev_password@postgres:5432/feed_me?schema=public
+    depends_on:
+      - postgres
 
   client:
     build: ./client
@@ -14,3 +29,6 @@ services:
       - "3000:80"
     depends_on:
       - server
+
+volumes:
+  postgres_data:
