@@ -24,3 +24,15 @@ CREATE TABLE IF NOT EXISTS menu_items (
 );
 
 CREATE INDEX IF NOT EXISTS menu_items_restaurant_id_idx ON menu_items(restaurant_id);
+
+
+CREATE TABLE IF NOT EXISTS users (
+  id            SERIAL PRIMARY KEY,
+  email         TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  name          TEXT NOT NULL,
+  phone         TEXT,
+  role          TEXT NOT NULL DEFAULT 'customer'
+                CHECK (role IN ('customer', 'owner', 'driver', 'admin')),
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
