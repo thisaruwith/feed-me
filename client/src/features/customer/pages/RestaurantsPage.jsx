@@ -5,7 +5,7 @@ import RestaurantCard from "../components/RestaurantCard";
 export default function RestaurantsPage() {
   const [restaurants, setRestaurants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState[null];
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;

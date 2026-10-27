@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
   const { rows } = await pool.query(
     "SELECT * FROM restaurants ORDER BY id ASC",
   );
-  res.json(rows);
+  res.json(rows.map(mapRestaurant));
 });
 
 router.get("/:id/menu", async (req, res) => {
@@ -42,11 +42,14 @@ router.get("/:id/menu", async (req, res) => {
   if (!restaurant)
     return res.status(404).json({ error: "Restaurant not found" });
 
-  const { rows: menuItems } = await pool.query(
+  const { rows: menuItemRows } = await pool.query(
     "SELECT * FROM menu_items WHERE restaurant_id = $1 ORDER BY id ASC",
     [restaurantId],
   );
-  res.json({ ...restaurant, menuItems });
+  res.json({
+    ...mapRestaurant(restaurant),
+    menuItems: menuItemRows.map(mapMenuItem),
+  });
 });
 
 module.exports = router;
